@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="snowflake-source" content="cortex-agent-authored" />
+  <title>Customer 360 — Next Best Action | Submission Deck</title>
+  <script type="application/json" id="snowflake-report-metadata">
+  {
+    "generated": "2026-10-04",
+    "intent": "Hackathon submission deck for Customer 360 Next Best Action",
+    "sections": [
+      { "id": "slide-1", "title": "Problem Brief", "dataSources": [], "producerNotes": "Static content from docs/problem-and-impact.md" },
+      { "id": "slide-2", "title": "Architecture", "dataSources": [], "producerNotes": "Architecture from docs/architecture.md and SQL scripts" },
+      { "id": "slide-3", "title": "Impact", "dataSources": [], "producerNotes": "Impact metrics from solution design and measured outcomes" },
+      { "id": "slide-4", "title": "Demo & Tech", "dataSources": [], "producerNotes": "Golden demo scenario and full technology stack" }
+    ]
+  }
+  </script>
+  <script src="/libs/mermaid@10.9.6/mermaid.min.js"></script>
+  <style>
+    :root { color-scheme: dark; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+      background: #0b1120;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    .slide {
+      min-height: 100vh;
+      padding: clamp(24px, 4vw, 48px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 2px solid #1e293b;
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .slide-number {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: clamp(14px, 2vw, 18px);
+      color: #94a3b8;
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      font-size: clamp(18px, 2.5vw, 24px);
+      color: #38bdf8;
+      margin: 24px 0 12px 0;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: clamp(14px, 2vw, 17px);
+      color: #a78bfa;
+      margin: 16px 0 8px 0;
+      font-weight: 600;
+    }
+
+    p, li { font-size: clamp(13px, 1.6vw, 15px); color: #cbd5e1; }
+    ul { padding-left: 20px; margin: 6px 0; }
+    li { margin-bottom: 4px; }
+    strong { color: #f1f5f9; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .card-red { border-left: 4px solid #ef4444; }
+    .card-green { border-left: 4px solid #22c55e; }
+    .card-blue { border-left: 4px solid #38bdf8; }
+    .card-purple { border-left: 4px solid #a78bfa; }
+    .card-teal { border-left: 4px solid #2dd4bf; }
+    .card-amber { border-left: 4px solid #f59e0b; }
+
+    .card .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .card .value {
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .card .desc { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+
+    .silo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+      justify-content: center;
+    }
+
+    .silo {
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+      min-width: 100px;
+      font-size: 13px;
+    }
+    .silo.broken { border-color: #ef4444; color: #fca5a5; }
+    .silo .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+    .tag {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: #94a3b8;
+      margin: 2px;
+    }
+
+    .step-flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 16px 0;
+      align-items: stretch;
+    }
+
+    .step {
+      flex: 1;
+      min-width: 160px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px;
+      position: relative;
+      margin-right: 24px;
+      margin-bottom: 8px;
+    }
+    .step:last-child { margin-right: 0; }
+    .step::after {
+      content: '→';
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #38bdf8;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .step:last-child::after { content: ''; }
+    .step .num {
+      background: #38bdf8;
+      color: #0b1120;
+      font-weight: 800;
+      font-size: 12px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
+    }
+    .step .title { font-weight: 700; font-size: 13px; color: #f1f5f9; margin-bottom: 4px; }
+    .step .detail { font-size: 11px; color: #94a3b8; }
+
+    .table-wrap { overflow-x: auto; margin: 12px 0; }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    th, td { border: 1px solid #334155; padding: 6px 10px; text-align: left; }
+    th { background: #1e293b; font-weight: 600; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { color: #cbd5e1; }
+
+    .quote-box {
+      background: linear-gradient(135deg, #1e1b4b, #1e293b);
+      border: 1px solid #4f46e5;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-style: italic;
+      font-size: clamp(13px, 1.8vw, 16px);
+      color: #c7d2fe;
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+
+    .mermaid-wrap { background: #1e293b; border-radius: 12px; padding: 16px; margin: 16px 0; overflow-x: auto; }
+
+    .footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #475569;
+      border-top: 1px solid #1e293b;
+    }
+
+    .highlight { color: #38bdf8; font-weight: 700; }
+    .red { color: #f87171; }
+    .green { color: #4ade80; }
+    .amber { color: #fbbf24; }
+
+    @media print {
+      .slide { page-break-after: always; min-height: auto; padding: 24px; }
+      body { background: #0b1120; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 1: PROBLEM BRIEF -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-1">
+  <div class="slide-number">1 / 4</div>
+  <h1>The Problem: Blind Service Interactions</h1>
+  <p class="subtitle">Insurance reps answer calls without a complete picture of the customer</p>
+
+  <h2>Current Workflow — 5 Disconnected Systems</h2>
+  <div class="silo-row">
+    <div class="silo"><span class="icon">📋</span>Policy Admin</div>
+    <div class="silo"><span class="icon">⚖️</span>Claims</div>
+    <div class="silo"><span class="icon">💳</span>Billing</div>
+    <div class="silo"><span class="icon">📞</span>CRM</div>
+    <div class="silo broken"><span class="icon">🚫</span>No Sentiment<br/>No AI Insights</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-red">
+      <div class="label">Time Per Call</div>
+      <div class="value">8–12 min</div>
+      <div class="desc">Manual lookup across 4–5 systems before the rep can act</div>
+    </div>
+    <div class="card card-red">
+      <div class="label">Invisible to Rep</div>
+      <div class="value">100%</div>
+      <div class="desc">Transcript sentiment, risk signals, recommended actions — all missing</div>
+    </div>
+  </div>
+
+  <h2>What's at Stake</h2>
+  <div class="grid-3">
+    <div class="card card-amber">
+      <div class="label">Renewal Window</div>
+      <div class="value">30 days</div>
+      <div class="desc">The highest-leverage moment in the customer lifecycle</div>
+    </div>
+    <div class="card card-amber">
+      <div class="label">Multi-Policy Household</div>
+      <div class="value">$3,000/yr</div>
+      <div class="desc">Auto ($1,200) + Home ($1,800) — lost permanently on churn</div>
+    </div>
+    <div class="card card-amber">
+      <div class="label">No Audit Trail</div>
+      <div class="value">Zero</div>
+      <div class="desc">No evidence, no consistency, no accountability</div>
+    </div>
+  </div>
+
+  <div class="quote-box">
+    <strong>Target User:</strong> Insurance Customer Service Representative — the sole persona.
+    Handles inbound calls where the customer has negative recent sentiment and an approaching renewal.
+    Must decide the safest action under time pressure, without systematic access to risk signals.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 2: ARCHITECTURE -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-2">
+  <div class="slide-number">2 / 4</div>
+  <h1>Architecture: 100% Snowflake-Native</h1>
+  <p class="subtitle">End-to-end pipeline — zero external dependencies</p>
+
+  <div class="mermaid-wrap">
+    <pre class="mermaid">
+flowchart LR
+    subgraph RAW["RAW Schema"]
+        R1["Customers\nPolicies\nClaims\nPayments"]
+        R2["Interactions\nTranscripts"]
+        R3["Unstructured\nDocuments"]
+    end
+
+    subgraph ENRICH["AI Enrichment"]
+        E1["CORTEX.SENTIMENT\nsentiment score"]
+        E2["CORTEX.COMPLETE\nmistral-7b\nsummary, topic,\nintent, urgency"]
+        E3["INTERACTIONS\n_ENRICHED"]
+    end
+
+    subgraph C360["Customer 360"]
+        V1["CUSTOMER_360\n_ENRICHED"]
+        V2["RISK_SIGNALS\n8 weighted signals"]
+        V3["NBA_RECOMMENDATIONS\n8 actions scored"]
+    end
+
+    subgraph AI["Cortex AI Services"]
+        S1["SV_CUSTOMER_360\nSemantic View\n47 dims, 11 facts\n17 metrics"]
+        S2["SVC_CUSTOMER_DOCS\nCortex Search\n493 documents"]
+        S3["CUSTOMER360_AGENT\nDual-tool Agent\nAnalyst + Search"]
+    end
+
+    subgraph APP["Streamlit App"]
+        A1["Home"]
+        A2["Customer 360"]
+        A3["Risk Signals"]
+        A4["Recommendations\n+ Approval Gate"]
+        A5["AI Assistant\nChatbot"]
+    end
+
+    R1 --> E3
+    R2 --> E1
+    R2 --> E2
+    E1 --> E3
+    E2 --> E3
+    E3 --> V1
+    V1 --> V2
+    V2 --> V3
+    V1 --> S1
+    R3 --> S2
+    S1 --> S3
+    S2 --> S3
+    V1 --> A2
+    V2 --> A3
+    V3 --> A4
+    S3 --> A5
+    </pre>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3>Cortex AI Functions</h3>
+      <ul>
+        <li><strong>SENTIMENT(text)</strong> → score -1 to +1</li>
+        <li><strong>COMPLETE('mistral-7b', prompt)</strong> → summary, topic, intent, urgency</li>
+        <li><strong>DATA_AGENT_RUN(agent, request)</strong> → conversational response</li>
+      </ul>
+      <h3>Key Objects</h3>
+      <ul>
+        <li><strong>SV_CUSTOMER_360</strong> — Semantic View (15 verified queries)</li>
+        <li><strong>SVC_CUSTOMER_DOCS</strong> — Cortex Search Service</li>
+        <li><strong>CUSTOMER360_AGENT</strong> — Cortex Agent (auto model)</li>
+        <li><strong>DT_CUSTOMER360</strong> — Dynamic Table (TARGET_LAG = DOWNSTREAM)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>RBAC — 4 Roles, Flat Hierarchy</h3>
+      <ul>
+        <li><strong>C360_DATA_ENGINEER</strong> — owns RAW + ANALYTICS</li>
+        <li><strong>C360_SERVICE_APP</strong> — reads ANALYTICS, writes DECISION</li>
+        <li><strong>C360_AUDITOR</strong> — read-only DECISION + ANALYTICS</li>
+        <li><strong>C360_ADMIN</strong> — DB + warehouse owner</li>
+      </ul>
+      <h3>Deployment</h3>
+      <ul>
+        <li>GitHub → Snowflake Git Repository → Streamlit</li>
+        <li>ALTER GIT REPOSITORY ... FETCH to sync</li>
+      </ul>
+      <h3>CoCo Skills Used</h3>
+      <div class="badge-row">
+        <span class="tag">sql-author</span>
+        <span class="tag">streamlit-in-snowflake</span>
+        <span class="tag">agent-studio</span>
+        <span class="tag">cortex-ai-functions</span>
+        <span class="tag">dynamic-tables</span>
+        <span class="tag">data-governance</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 3: IMPACT -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-3">
+  <div class="slide-number">3 / 4</div>
+  <h1>Impact: 12 Minutes → 5 Seconds</h1>
+  <p class="subtitle">Measurable outcomes, scalability, and extension path</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>Before (Manual)</th><th>After (Customer 360)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Customer context</td><td class="red">8–12 min, 5 systems</td><td class="green">&lt;5 sec, single view</td></tr>
+        <tr><td>Sentiment visibility</td><td class="red">Zero</td><td class="green">100% via CORTEX.SENTIMENT()</td></tr>
+        <tr><td>Risk detection</td><td class="red">Subjective gut feel</td><td class="green">8 deterministic weighted signals</td></tr>
+        <tr><td>Recommendations</td><td class="red">Varies by rep</td><td class="green">Standardized NBA engine + confidence</td></tr>
+        <tr><td>Decision audit</td><td class="red">None</td><td class="green">Every decision logged with evidence</td></tr>
+        <tr><td>Document search</td><td class="red">Not available</td><td class="green">Natural language via Cortex Search</td></tr>
+        <tr><td>AI assistant</td><td class="red">Not available</td><td class="green">Cortex Agent chatbot (structured + unstructured)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Scalability & Cross-Domain Portability</h2>
+  <div class="grid-3">
+    <div class="card card-blue">
+      <div class="label">Insurance (current)</div>
+      <div class="desc">Customer → Policies → Coverages<br/>Risk: renewal proximity, sentiment<br/>NBA: retain, escalate, cross-sell</div>
+    </div>
+    <div class="card card-purple">
+      <div class="label">Lending</div>
+      <div class="desc">Customer → Loans → Collateral<br/>Risk: DTI changes, rate reset<br/>NBA: refinance, forbearance</div>
+    </div>
+    <div class="card card-teal">
+      <div class="label">Healthcare / Telecom</div>
+      <div class="desc">Patient → Treatments | Subscriber → Plans<br/>Same architecture pattern, different domain schema</div>
+    </div>
+  </div>
+
+  <h2>Beyond the Demo</h2>
+  <div class="grid-2">
+    <ul>
+      <li><strong>Phase 2:</strong> ML churn model replacing rule-based scoring</li>
+      <li><strong>Phase 3:</strong> Outcome feedback loop from rep decisions</li>
+      <li><strong>Phase 4:</strong> Multi-persona dashboards</li>
+    </ul>
+    <ul>
+      <li><strong>Phase 5:</strong> Proactive outbound on risk thresholds</li>
+      <li><strong>Phase 6:</strong> MCP integration (Jira, Slack, Teams)</li>
+    </ul>
+  </div>
+
+  <div class="quote-box">
+    "AI provides indicators. Deterministic rules produce recommendations. Humans decide. Every decision is auditable."
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 4: GOLDEN DEMO + TECH STACK -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-4">
+  <div class="slide-number">4 / 4</div>
+  <h1>Golden Demo: Data → Decision</h1>
+  <p class="subtitle">Maria Chen — multi-policy holder, auto renewal in 16 days, 2 negative interactions</p>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="num">1</div>
+      <div class="title">SELECT</div>
+      <div class="detail">Search "Maria Chen" → CUST-001<br/>Auto + Home policies</div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="title">UNDERSTAND</div>
+      <div class="detail">Unified 360: policies, payments, claims, AI sentiment (worsening)</div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="title">EXPLAIN RISK</div>
+      <div class="detail">Risk: HIGH (0.62)<br/>Renewal 16d + 2 negative interactions</div>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <div class="title">RECOMMEND</div>
+      <div class="detail">Retention Outreach<br/>Confidence: High (0.85)<br/>+ 2 alternatives</div>
+    </div>
+    <div class="step">
+      <div class="num">5</div>
+      <div class="title">APPROVE</div>
+      <div class="detail">Accept / Modify / Reject<br/>Decision + evidence logged</div>
+    </div>
+  </div>
+
+  <div class="card card-blue" style="margin: 12px 0;">
+    <div class="label">+ AI Assistant (Bonus)</div>
+    <div class="desc" style="font-size: 13px;">
+      <strong>"What does Maria Chen's auto policy cover?"</strong> → Agent resolves CUST-001 via Analyst → searches docs via Search → returns: Liability $219K, Collision $54K ($1,600 ded), Comprehensive $65K ($1,000 ded)
+    </div>
+  </div>
+
+  <h2>Technology Stack</h2>
+  <div class="grid-2">
+    <div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Layer</th><th>Components</th></tr>
+          <tr><td>Platform</td><td>CUSTOMER360_DB (3 schemas), Dynamic Table, Stream, Git Repo</td></tr>
+          <tr><td>AI Functions</td><td>SENTIMENT(), COMPLETE('mistral-7b'), DATA_AGENT_RUN()</td></tr>
+          <tr><td>Cortex Objects</td><td>SV_CUSTOMER_360, SVC_CUSTOMER_DOCS, CUSTOMER360_AGENT</td></tr>
+          <tr><td>Application</td><td>Streamlit-in-Snowflake, 5 pages, snowflake-ml-python</td></tr>
+          <tr><td>Security</td><td>4 RBAC roles, flat hierarchy, PUBLIC revoked</td></tr>
+          <tr><td>Deployment</td><td>GitHub → Snowflake Git Repo → auto-sync</td></tr>
+          <tr><td>Dev Tool</td><td>CoCo CLI — all artifacts authored via CoCo</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>Agent Orchestration</h3>
+      <ul>
+        <li><strong>Tool 1: Analyst1</strong> — cortex_analyst_text_to_sql → SV_CUSTOMER_360</li>
+        <li><strong>Tool 2: Search1</strong> — cortex_search → SVC_CUSTOMER_DOCS</li>
+        <li><strong>Workflow:</strong> Name → customer_id (Analyst) → filter docs (Search) → combine</li>
+        <li><strong>Guardrails:</strong> No technical details, no error codes, business-only responses</li>
+      </ul>
+      <h3>Risk Signal Engine</h3>
+      <ul>
+        <li>8 signals: renewal_proximity (0.20), sentiment_negative (0.20), sentiment_trend (0.15), payment_risk (0.15), complaint_activity (0.10), claim_activity (0.10), engagement_drop (0.05), cross_sell_gap (0.05)</li>
+        <li>Tiers: critical ≥0.75, high ≥0.50, medium ≥0.25, low &lt;0.25</li>
+      </ul>
+      <h3>NBA Action Library</h3>
+      <ul>
+        <li>8 actions: Retention Outreach, Renewal Reminder, Complaint Follow-Up, Claim Escalation, Billing Assistance, Cross-Sell Home, Cross-Sell Umbrella, No Action</li>
+        <li>Scored: relevance × safety → ranked with evidence</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid #334155;">
+    <p style="font-size: 13px; color: #64748b;">
+      <strong style="color: #38bdf8;">Built for:</strong> Snowflake CoCo CLI Hackathon &nbsp;|&nbsp;
+      <strong style="color: #38bdf8;">Repo:</strong> github.com/kishan080/customer360-next-best-action &nbsp;|&nbsp;
+      <strong style="color: #38bdf8;">Demo:</strong> Video Project.mp4
+    </p>
+  </div>
+</div>
+
+<div class="footer">
+  Customer 360 — Next Best Action | Built entirely on Snowflake with CoCo CLI
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: 'strict',
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      lineColor: '#38bdf8',
+      secondaryColor: '#1e1b4b',
+      tertiaryColor: '#0f172a',
+      fontSize: '12px'
+    }
+  });
+</script>
+
+</body>
+</html>
